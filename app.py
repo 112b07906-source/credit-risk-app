@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import pickle
+import joblib  # 改用 joblib
 import numpy as np
 
 # 設定頁面語系與標題

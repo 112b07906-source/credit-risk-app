@@ -53,10 +53,22 @@ input_df = user_input_features()
 if st.button("🚀 開始評估風險"):
     if model is not None:
         prediction_proba = model.predict_proba(input_df)[0][1]
-        st.subheader(f"預測違約機率：{prediction_proba:.2%}")
-        if prediction_proba > 0.5:
+        
+        st.markdown("---")
+        st.subheader(f"🎯 預測違約率：{prediction_proba:.2%}")
+        
+        # 嚴謹的風控判斷邏輯
+        if prediction_proba >= 0.35: # 只要超過 35% 就是高風險
             st.error("❌ 高風險 (建議拒貸)")
-        else:
+            st.info("理由：該客戶違約機率顯著高於平均值，財務狀況不穩定。")
+        elif prediction_proba >= 0.15: # 15% - 35% 之間是中風險
+            st.warning("⚠️ 中風險 (建議加強審核)")
+            st.info("理由：有潛在逾期風險，建議要求更多財力證明或降低授信額度。")
+        else: # 低於 15% 才是低風險
             st.success("✅ 低風險 (准予核貸)")
+            st.info("理由：信用評分極佳，預測表現穩健。")
+            
+        # 畫一個視覺化進度條，讓報告更專業
+        st.progress(prediction_proba) 
     else:
         st.warning("系統尚未準備好，請檢查模型檔案。")
